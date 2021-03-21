@@ -12,8 +12,8 @@ import (
 // @termsOfService http://swagger.io/terms/
 // @contact.name API Support
 // @contact.email fiber@swagger.io
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
 // @host localhost:8080
 // @BasePath /
 func main() {
@@ -24,6 +24,5 @@ func main() {
 	})
 
 	app.Get("/docs/*", redoc.Handler)
-
 	app.Listen(":8080")
 }

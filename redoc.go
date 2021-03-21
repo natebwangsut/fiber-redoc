@@ -22,10 +22,10 @@ const (
 	indexPath = "index.html"
 )
 
-// Handler default
+// Handler registers "/index.html" and "/docs.json" endpoint as a form of fiber.Handler
 var Handler = New()
 
-// New returns custom handler
+// New returns custom handler where it sends redoc HTML page with swagger docs.json if it's registered
 func New() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var p string
@@ -39,7 +39,7 @@ func New() fiber.Handler {
 		switch p {
 		// Serve HTML page
 		case indexPath:
-			return c.Type("html").SendString(redoxIndex)
+			return c.Type("html").SendString(redocIndex)
 		// Serve JSON
 		case docPath:
 			doc, err := swag.ReadDoc()
@@ -57,7 +57,7 @@ func New() fiber.Handler {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const redoxIndex = `
+const redocIndex = `
 <!DOCTYPE html>
 <html>
   <head>
