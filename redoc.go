@@ -21,12 +21,12 @@ type docsProvider interface {
 type docsService struct{}
 
 // ReadDoc uses swaggo for swagger result
-func (docsService) ReadDoc() (string, error) {
+func (ds *docsService) ReadDoc() (string, error) {
 	return swag.ReadDoc()
 }
 
 var (
-	docs   docsProvider  = docsService{}
+	docs   docsProvider  = &docsService{}
 	prefix               = ""
 	fs     fiber.Handler = filesystem.New(filesystem.Config{Root: swaggerFiles.HTTP})
 )

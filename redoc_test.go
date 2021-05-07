@@ -11,22 +11,28 @@ import (
 	"github.com/swaggo/swag"
 )
 
+////////////////////////////////////////////////////////////////////////////////
+
 type mockDocsOKInterface struct {
 	mock.Mock
-}
-
-//
-func (mockDocsOKInterface) ReadDoc() (string, error) {
-	return "", nil
 }
 
 type mockDocsErrInterface struct {
 	mock.Mock
 }
 
-func (mockDocsErrInterface) ReadDoc() (string, error) {
+////////////////////////////////////////////////////////////////////////////////
+
+//
+func (m *mockDocsOKInterface) ReadDoc() (string, error) {
+	return "", nil
+}
+
+func (m *mockDocsErrInterface) ReadDoc() (string, error) {
 	return "", errors.New("unknown error")
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 func Test_DocsService(t *testing.T) {
 	ds := docsService{}
@@ -97,7 +103,7 @@ func Test_DocsJSON_OK(t *testing.T) {
 	app := fiber.New()
 	app.Get("/docs/*", Handler)
 
-	docs = mockDocsOKInterface{}
+	docs = &mockDocsOKInterface{}
 	t.Run("docs.json should OK", func(t *testing.T) {
 		req, _ := http.NewRequest(http.MethodGet, "/docs/docs.json", nil)
 		res, err := app.Test(req)
@@ -116,7 +122,7 @@ func Test_DocsJSON_Error(t *testing.T) {
 	app := fiber.New()
 	app.Get("/docs/*", Handler)
 
-	docs = mockDocsErrInterface{}
+	docs = &mockDocsErrInterface{}
 	t.Run("docs.json should Err", func(t *testing.T) {
 		req, _ := http.NewRequest(http.MethodGet, "/docs/docs.json", nil)
 		res, err := app.Test(req)
@@ -135,7 +141,7 @@ func Test_OutOfScope(t *testing.T) {
 	app := fiber.New()
 	app.Get("/docs/*", Handler)
 
-	docs = mockDocsErrInterface{}
+	docs = &mockDocsErrInterface{}
 	t.Run("random should OK", func(t *testing.T) {
 		req, _ := http.NewRequest(http.MethodGet, "/docs/random", nil)
 		res, err := app.Test(req)
