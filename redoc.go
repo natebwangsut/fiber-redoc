@@ -12,14 +12,30 @@ import (
 	"github.com/swaggo/swag"
 )
 
+// docsProvider provide swagger interace
+type docsProvider interface {
+	ReadDoc() (string, error)
+}
+
+// DocsService is a default interface for interacting with swag
+type docsService struct{}
+
+// ReadDoc uses swaggo for swagger result
+func (docsService) ReadDoc() (string, error) {
+	return swag.ReadDoc()
+}
+
 var (
+	docs   docsProvider  = docsService{}
 	prefix               = ""
 	fs     fiber.Handler = filesystem.New(filesystem.Config{Root: swaggerFiles.HTTP})
 )
 
 const (
-	docPath   = "docs.json"
-	indexPath = "index.html"
+	emptyPath    = ""
+	basePath     = "docs"
+	docsJSONPath = "docs.json"
+	indexPath    = "index.html"
 )
 
 // Handler registers "/index.html" and "/docs.json" endpoint as a form of fiber.Handler
@@ -34,6 +50,7 @@ func New() fiber.Handler {
 		} else {
 			p = strings.TrimPrefix(c.Path(), prefix)
 			p = strings.TrimPrefix(p, "/")
+			p = strings.TrimSuffix(p, "/")
 		}
 
 		switch p {
@@ -41,14 +58,14 @@ func New() fiber.Handler {
 		case indexPath:
 			return c.Type("html").SendString(redocIndex)
 		// Serve JSON
-		case docPath:
-			doc, err := swag.ReadDoc()
+		case docsJSONPath:
+			doc, err := docs.ReadDoc()
 			if err != nil {
 				return err
 			}
 			return c.Type("json").SendString(doc)
-		// Redirect /docs/ and /docs to /docs/index.html
-		case "", "/":
+		// Redirect /docs to /docs/index.html
+		case basePath, emptyPath:
 			return c.Redirect(path.Join(prefix, indexPath), fiber.StatusMovedPermanently)
 		}
 		return nil

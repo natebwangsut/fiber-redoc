@@ -25,4 +25,4 @@ Please see example folder on this repository for simple setup.
 
 ---
 
-Made with :heart: of `Swagger` and `React`.
+Made with :heart: of `swagger`, `fiber` and `react.js`.
