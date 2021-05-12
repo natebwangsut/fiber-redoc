@@ -12,7 +12,7 @@ import (
 	"github.com/swaggo/swag"
 )
 
-// docsProvider provide swagger interace
+// docsProvider provide swagger interface
 type docsProvider interface {
 	ReadDoc() (string, error)
 }
